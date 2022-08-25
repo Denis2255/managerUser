@@ -80,11 +80,10 @@ public class UserDAO {
     }
 
     public User selectUser(int id) {
-        System.out.println("__________________________________________qweqw");
         LOGGER.info("Select users is successfully");
         User user = null;
         try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_ID);) {
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_ID)) {
             preparedStatement.setInt(1, id);
             System.out.println(preparedStatement);
             ResultSet rs = preparedStatement.executeQuery();
@@ -106,7 +105,7 @@ public class UserDAO {
         LOGGER.info("Select All users is successfully");
         List<User> users = new ArrayList<>();
         try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_USERS);) {
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_USERS)) {
             System.out.println(preparedStatement);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
@@ -124,20 +123,17 @@ public class UserDAO {
         return users;
     }
 
-    public boolean deleteUser(int id) throws SQLException {
+    public void deleteUser(int id) throws SQLException {
         LOGGER.info("Delete users is successfully");
-        boolean rowDeleted;
         try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(DELETE_USERS_SQL);) {
+             PreparedStatement statement = connection.prepareStatement(DELETE_USERS_SQL)) {
             statement.setInt(1, id);
-            rowDeleted = statement.executeUpdate() > 0;
+
         }
-        return rowDeleted;
     }
 
-    public boolean editUser(User user) {
+    public void editUser(User user) {
         LOGGER.info("Edit users is successfully");
-        boolean rowUpdated = false;
         try {
             Connection connection = getConnection();
 
@@ -161,12 +157,10 @@ public class UserDAO {
             preparedStatement3.setString(1, user.getLanguage());
             preparedStatement3.setInt(2, user.getId());
             preparedStatement3.execute();
-            rowUpdated = preparedStatement.executeUpdate() > 0;
 
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return rowUpdated;
     }
 
 }

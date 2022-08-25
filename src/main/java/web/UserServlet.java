@@ -53,6 +53,4 @@ public class UserServlet extends HttpServlet {
             throw new ServletException(e);
         }
     }
-
-
 }
