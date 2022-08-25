@@ -11,7 +11,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class Controller {
-  private final UserDAO userDAO = new UserDAO();
+    private final UserDAO userDAO = new UserDAO();
+
     public void listUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
         System.out.println("lustUser");

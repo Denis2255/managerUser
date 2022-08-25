@@ -13,37 +13,51 @@ import model.Controller;
 
 @WebServlet("/")
 public class UserServlet extends HttpServlet {
-
-
+    private final String NEW = "/new";
+    private final String INSERT = "/insert";
+    private final String DELETE = "/delete";
+    private final String EDIT = "/edit";
+    private final String UPDATE = "/update";
+    Controller controller = new Controller();
+    String action;
 
     public void init() {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doGet(request, response);//get/post
+        action = request.getServletPath();
+        try {
+            switch (action) {
+                case INSERT:
+                    controller.insertUser(request, response);
+                    break;
+
+                case UPDATE:
+                    controller.editUser(request, response);
+                    break;
+                default:
+                    controller.listUser(request, response);
+                    break;
+            }
+        } catch (SQLException e) {
+            throw new ServletException();
+        }
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String action = request.getServletPath();
-        Controller controller=new Controller();
+        action = request.getServletPath();
         try {
             switch (action) {
-                case "/new":
+                case NEW:
                     controller.showNewForm(request, response);
                     break;
-                case "/insert":
-                    controller.insertUser(request, response);
-                    break;
-                case "/delete":
-                    controller.deleteUser(request, response);
-                    break;
-                case "/edit":
+                case EDIT:
                     controller.showEditForm(request, response);
                     break;
-                case "/update":
-                    controller.editUser(request, response);
+                case DELETE:
+                    controller.deleteUser(request, response);
                     break;
                 default:
                     controller.listUser(request, response);
