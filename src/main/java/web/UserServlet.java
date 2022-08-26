@@ -1,6 +1,7 @@
 package web;
 
 import java.io.IOException;
+import java.sql.Driver;
 import java.sql.SQLException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,6 +23,7 @@ public class UserServlet extends HttpServlet {
     String action;
 
     public void init() {
+
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -32,7 +34,6 @@ public class UserServlet extends HttpServlet {
                 case INSERT:
                     controller.insertUser(request, response);
                     break;
-
                 case UPDATE:
                     controller.editUser(request, response);
                     break;

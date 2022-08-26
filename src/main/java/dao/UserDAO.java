@@ -1,10 +1,6 @@
 package dao;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,9 +10,9 @@ import org.slf4j.Logger;
 
 public class UserDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserDAO.class);
-    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/qwerty?useSSL=false";
-    private static final String JDBC_USERNAME = "root";
-    private static final String JDBC_PASSWORD = "root";
+//    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/qwerty?useSSL=false";
+//    private static final String JDBC_USERNAME = "root";
+//    private static final String JDBC_PASSWORD = "root";
 
     private static final String SELECT_USER_BY_ID = "select qwerty.users.id, name, qwerty.contactinformation.email, phoneNumber, qwerty.language.language, qwerty.country.country from qwerty.users  \n" +
             "inner join qwerty.contactinformation on qwerty.users.id = qwerty.contactinformation.id\n" +
@@ -39,7 +35,7 @@ public class UserDAO {
         Connection connection = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection(JDBC_URL, JDBC_USERNAME, JDBC_PASSWORD);
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306","root","root");
         } catch (SQLException | ClassNotFoundException e) {
             LOGGER.error(e.getMessage(), e);
         }
