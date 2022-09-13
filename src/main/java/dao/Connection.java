@@ -4,26 +4,24 @@ package dao;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import java.sql.Connection;
 import java.sql.SQLException;
 
-public class ConnectionPool {
+public class Connection {
 
-    private ConnectionPool(){
-        //private constructor
+    private Connection(){
     }
 
-    private static ConnectionPool instance = null;
+    private static Connection instance = null;
 
-    public static ConnectionPool getInstance(){
+    public static Connection getInstance(){
         if (instance==null)
-            instance = new ConnectionPool();
+            instance = new Connection();
         return instance;
     }
 
-    public Connection getConnection(){
+    public java.sql.Connection getConnection(){
 
-        Connection c = null;
+        java.sql.Connection c = null;
         try {
             InitialContext initContext= new InitialContext();
             DataSource ds = (DataSource)initContext.lookup("java:comp/env/jdbc/qwerty@localhost");

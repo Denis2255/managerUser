@@ -10,32 +10,28 @@ import org.slf4j.Logger;
 
 public class UserDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserDAO.class);
-//    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/qwerty?useSSL=false";
-//    private static final String JDBC_USERNAME = "root";
-//    private static final String JDBC_PASSWORD = "root";
 
-    private static final String SELECT_USER_BY_ID = "select qwerty.users.id, name, qwerty.contactinformation.email, phoneNumber, qwerty.language.language, qwerty.country.country from qwerty.users  \n" +
+    private static final String SELECT_USER_BY_ID = "select qwerty.users.id, name, qwerty.contactinformation.email, phoneNumber, qwerty.language.language, qwerty.country.country, qwerty.users.role from qwerty.users  \n" +
             "inner join qwerty.contactinformation on qwerty.users.id = qwerty.contactinformation.id\n" +
             "inner join qwerty.country on qwerty.users.id = qwerty.country.id\n" +
             "inner join qwerty.users_language on qwerty.users.id = qwerty.users_language.id\n" +
             "inner join qwerty.language on qwerty.users_language.id = qwerty.language.language_id\n" +
             "where qwerty.users.id like ? ;";
-    private static final String SELECT_ALL_USERS = "select qwerty.users.id, name, qwerty.contactinformation.email, phoneNumber, qwerty.language.language, qwerty.country.country from qwerty.users \n" +
+    private static final String SELECT_ALL_USERS = "select qwerty.users.id, name, qwerty.contactinformation.email, phoneNumber, qwerty.language.language, qwerty.country.country, qwerty.users.role from qwerty.users \n" +
             "inner join qwerty.contactinformation on qwerty.users.id = qwerty.contactinformation.id\n" +
             "inner join qwerty.country on qwerty.users.id = qwerty.country.id\n" +
             "inner join qwerty.users_language on qwerty.users.id = qwerty.users_language.id\n" +
             "inner join qwerty.language on qwerty.users_language.id = qwerty.language.language_id;";
-    private static final String DELETE_USERS_SQL = "delete  from qwerty.contactinformation where qwerty.contactinformation.id = ?;\n";
 
 
     public UserDAO() {
     }
 
-    protected Connection getConnection() {
-        Connection connection = null;
+    protected java.sql.Connection getConnection() {
+        java.sql.Connection connection = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306","root","root");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306", "root", "root");
         } catch (SQLException | ClassNotFoundException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -46,10 +42,12 @@ public class UserDAO {
         LOGGER.info("Add users is successfully");
 
         try {
-            Connection connection = getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO qwerty.users (name) VALUES(?);");
+            java.sql.Connection connection = getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO qwerty.users (name,role) VALUES(?,?);");
             preparedStatement.setString(1, user.getName());
+            preparedStatement.setString(2, user.getRoleList());
             preparedStatement.execute();
+
 
             PreparedStatement preparedStatement1 = connection.prepareStatement("INSERT INTO `qwerty`.`contactinformation` ( `email`, `phoneNumber`) VALUES ( ?,?);");
             preparedStatement1.setString(1, user.getEmail());
@@ -70,6 +68,7 @@ public class UserDAO {
             preparedStatement4.setString(1, user.getLanguage());
             preparedStatement4.execute();
 
+
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -78,7 +77,7 @@ public class UserDAO {
     public User selectUser(int id) {
         LOGGER.info("Select users is successfully");
         User user = null;
-        try (Connection connection = getConnection();
+        try (java.sql.Connection connection = getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_ID)) {
             preparedStatement.setInt(1, id);
             System.out.println(preparedStatement);
@@ -89,7 +88,8 @@ public class UserDAO {
                 String country = rs.getString("country");
                 String phoneNumber = rs.getString("phoneNumber");
                 String language = rs.getString("language");
-                user = new User(id, name, email, country, phoneNumber, language);
+                String role = rs.getString("role");
+                user = new User(id, name, email, country, phoneNumber, language, role);
             }
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(), e);
@@ -100,7 +100,7 @@ public class UserDAO {
     public List<User> selectAllUsers() {
         LOGGER.info("Select All users is successfully");
         List<User> users = new ArrayList<>();
-        try (Connection connection = getConnection();
+        try (java.sql.Connection connection = getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_USERS)) {
             System.out.println(preparedStatement);
             ResultSet rs = preparedStatement.executeQuery();
@@ -111,7 +111,8 @@ public class UserDAO {
                 String country = rs.getString("country");
                 String phoneNumber = rs.getString("phoneNumber");
                 String language = rs.getString("language");
-                users.add(new User(id, name, email, country, phoneNumber, language));
+                String role = rs.getString("role");
+                users.add(new User(id, name, email, country, phoneNumber, language, role));
             }
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(), e);
@@ -121,9 +122,15 @@ public class UserDAO {
 
     public void deleteUser(int id) throws SQLException {
         LOGGER.info("Delete users is successfully");
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(DELETE_USERS_SQL)) {
+        try (java.sql.Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement("SET  @a=?;\n" +
+                     "delete  from qwerty.contactinformation where qwerty.contactinformation.id = @a;\n" +
+                     "delete  from qwerty.country where qwerty.country.id = @a;\n" +
+                     "delete  from qwerty.language where qwerty.language.language_id = @a;\n" +
+                     "delete  from qwerty.users_language where qwerty.users_language.id = @a;\n" +
+                     "delete  from qwerty.users where qwerty.users.id = @a;")) {
             statement.setInt(1, id);
+            statement.executeQuery();
 
         }
     }
@@ -131,11 +138,13 @@ public class UserDAO {
     public void editUser(User user) {
         LOGGER.info("Edit users is successfully");
         try {
-            Connection connection = getConnection();
+            Connection connectionPool = (Connection) Connection.getInstance().getConnection();
+            java.sql.Connection connection = getConnection();
 
-            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE qwerty.users SET name = ? WHERE id = ?;");
+            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE qwerty.users SET name = ?, role= ? WHERE id = ?;");
             preparedStatement.setString(1, user.getName());
-            preparedStatement.setInt(2, user.getId());
+            preparedStatement.setString(2, user.getRoleList());
+            preparedStatement.setInt(3, user.getId());
             preparedStatement.execute();
 
             PreparedStatement preparedStatement1 = connection.prepareStatement("UPDATE `qwerty`.`contactinformation` SET email = ?, phoneNumber = ? WHERE id = ?;");
@@ -154,9 +163,43 @@ public class UserDAO {
             preparedStatement3.setInt(2, user.getId());
             preparedStatement3.execute();
 
+
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+    private final List<User> store = new ArrayList<>();
+    public void addCostumer(final User user) {
+
+        for (User u : store) {
+            if (u.getLogin().equals(user.getLogin()) && u.getPassword().equals(user.getPassword())) {
+                return;
+            }
+        }
+        store.add(user);
+    }
+    public User.ROLE getRoleByLoginPassword(final String login, final String password) {
+        User.ROLE result = User.ROLE.UNKNOWN;
+
+        for (User user : store) {
+            if (user.getLogin().equals(login) && user.getPassword().equals(password)) {
+                result = user.getRole();
+            }
+        }
+        return result;
+    }
+
+    public boolean userIsExist(final String login, final String password) {
+
+        boolean result = false;
+
+        for (User user : store) {
+            if (user.getLogin().equals(login) && user.getPassword().equals(password)) {
+                result = true;
+                break;
+            }
+        }
+        return result;
     }
 
 }

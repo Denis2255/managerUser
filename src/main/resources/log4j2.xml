@@ -13,15 +13,12 @@
     </Appenders>
 
     <Loggers>
-        <Logger name="dao" level="info" additivity="false">
-            <AppenderRef ref="LogToFile"/>
-            <AppenderRef ref="LogToConsole"/>
-        </Logger>
+
         <Logger name="dao" level="info" additivity="false">
             <AppenderRef ref="LogToConsole"/>
         </Logger>
-        <Root level="error">
-            <AppenderRef ref="LogToFile"/>
+        <Root level="info">
+
             <AppenderRef ref="LogToConsole"/>
         </Root>
     </Loggers>

@@ -13,12 +13,19 @@ import java.util.List;
 public class Controller {
     private final UserDAO userDAO = new UserDAO();
 
+
     public void listUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
-        System.out.println("lustUser");
         List<User> listUser = userDAO.selectAllUsers();
         request.setAttribute("listUser", listUser);
         RequestDispatcher dispatcher = request.getRequestDispatcher("user-list.jsp");
+        dispatcher.forward(request, response);
+    }
+    public void listUserUser(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException, ServletException {
+        List<User> listUser = userDAO.selectAllUsers();
+        request.setAttribute("listUserUser", listUser);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("USER.jsp");
         dispatcher.forward(request, response);
     }
 
@@ -48,9 +55,11 @@ public class Controller {
         String country = request.getParameter("country");
         String phoneNumber = request.getParameter("phoneNumber");
         String language = request.getParameter("language");
-        User newUser = new User(name, email, phoneNumber, language, country);
+        String role = request.getParameter("role");
+        User newUser = new User(name, email, phoneNumber, language, country, role);
         userDAO.addUser(newUser);
         response.sendRedirect("list");
+
     }
 
     public void editUser(HttpServletRequest request, HttpServletResponse response)
@@ -61,7 +70,8 @@ public class Controller {
         String country = request.getParameter("country");
         String phoneNumber = request.getParameter("phoneNumber");
         String language = request.getParameter("language");
-        User book = new User(id, name, email, phoneNumber, language, country);
+        String role = request.getParameter("role");
+        User book = new User(id, name, email, phoneNumber, language, country, role);
         userDAO.editUser(book);
         response.sendRedirect("list");
     }

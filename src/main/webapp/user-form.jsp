@@ -55,12 +55,12 @@
                                                                 name="phoneNumber">
                     </fieldset>
 
-                        <fieldset class="form-group">
-                            <label>Language</label> <input type="text"
-                                                               value="<c:out value='${user.language}' />"
-                                                               class="form-control"
-                                                               name="language">
-                        </fieldset>
+                    <fieldset class="form-group">
+                        <label>Language</label> <input type="text"
+                                                       value="<c:out value='${user.language}' />"
+                                                       class="form-control"
+                                                       name="language">
+                    </fieldset>
 
                     <fieldset class="form-group">
                         <label>User Country</label> <input type="text"
