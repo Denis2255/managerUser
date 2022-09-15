@@ -168,7 +168,9 @@ public class UserDAO {
             LOGGER.error(e.getMessage(), e);
         }
     }
+
     private final List<User> store = new ArrayList<>();
+
     public void addCostumer(final User user) {
 
         for (User u : store) {
@@ -178,6 +180,7 @@ public class UserDAO {
         }
         store.add(user);
     }
+
     public User.ROLE getRoleByLoginPassword(final String login, final String password) {
         User.ROLE result = User.ROLE.UNKNOWN;
 
@@ -190,7 +193,6 @@ public class UserDAO {
     }
 
     public boolean userIsExist(final String login, final String password) {
-
         boolean result = false;
 
         for (User user : store) {

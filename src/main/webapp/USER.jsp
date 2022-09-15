@@ -67,7 +67,7 @@
         </div>
     </div>
 </div>
-<center><br/><a class="q" href="<c:url value='/' />">Logout</a></center>
+<center><br/><a class="q" href="<%=request.getContextPath()%>/logout" class="btn btn-success">Logout</a></center>
 <%--<a href="<c:url value="/logout"/>">Logout</a>--%>
 </body>
 </html>

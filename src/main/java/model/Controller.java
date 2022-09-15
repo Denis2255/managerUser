@@ -4,6 +4,7 @@ import dao.UserDAO;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -18,9 +19,9 @@ public class Controller {
             throws SQLException, IOException, ServletException {
         List<User> listUser = userDAO.selectAllUsers();
         request.setAttribute("listUser", listUser);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("user-list.jsp");
-        dispatcher.forward(request, response);
+        request.getRequestDispatcher("user-list.jsp").forward(request, response);
     }
+
     public void listUserUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
         List<User> listUser = userDAO.selectAllUsers();
@@ -33,7 +34,7 @@ public class Controller {
             throws ServletException, IOException {
         System.out.println("showNewForm");
         RequestDispatcher dispatcher = request.getRequestDispatcher("user-form.jsp");
-        dispatcher.forward(request, response);
+        dispatcher.include(request, response);
     }
 
     public void showEditForm(HttpServletRequest request, HttpServletResponse response)
@@ -81,5 +82,14 @@ public class Controller {
         int id = Integer.parseInt(request.getParameter("id"));
         userDAO.deleteUser(id);
         response.sendRedirect("list");
+    }
+
+    public void deleteCookie(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("JWT"))
+                cookie.setMaxAge(0);
+            response.addCookie(cookie);
+        }
     }
 }
