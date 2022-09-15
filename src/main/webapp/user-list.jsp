@@ -55,8 +55,7 @@
                     <td><c:out value="${user.country}"/></td>
                     <td><c:out value="${user.roleList}"/></td>
                     <td><a href="edit?id=<c:out value='${user.id}' />">Edit</a>
-                        &nbsp;&nbsp;&nbsp;&nbsp; <a
-                                href="delete?id=<c:out value='${user.id}' />">Delete</a></td>
+                        &nbsp;&nbsp;&nbsp;&nbsp; <a href="delete?id=<c:out value='${user.id}' />">Delete</a></td>
                 </tr>
             </c:forEach>
 
@@ -70,6 +69,6 @@
         </div>
     </div>
 </div>
-<center><br/><a class="q" href="<c:url value='/' />">Logout</a></center>
+<center><br/><a class="q" href="<%=request.getContextPath()%>/logout" class="btn btn-success">Logout</a></center>
 </body>
 </html>

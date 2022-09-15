@@ -68,6 +68,12 @@
                                                            class="form-control"
                                                            name="country">
                     </fieldset>
+                        <fieldset class="form-group">
+                            <label>Role</label> <input type="text"
+                                                               value="<c:out value='${user.role}' />"
+                                                               class="form-control"
+                                                               name="role">
+                        </fieldset>
 
                     <button type="submit" class="btn btn-success">Save</button>
                 </form>
